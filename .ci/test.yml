@@ -1,0 +1,17 @@
+# vim: set ft=concourse:
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: alpine
+
+params:
+  skip_download: true
+
+inputs:
+- name: pull-request
+
+run:
+  path: pull-request/.ci/test.sh
