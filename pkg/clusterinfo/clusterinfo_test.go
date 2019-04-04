@@ -169,7 +169,7 @@ func TestRetriever_Run(t *testing.T) {
 	retriever := New(log.NewLogfmtLogger(os.Stdout), mockES.Client(), u, 0)
 
 	// setup mock consumer
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 	mc := newMockConsumer(ctx, "test-consumer", t)
 	if err := retriever.RegisterConsumer(mc); err != nil {
@@ -181,7 +181,7 @@ func TestRetriever_Run(t *testing.T) {
 
 	// trigger update
 	retriever.Update()
-	time.Sleep(20 * time.Millisecond)
+	time.Sleep(10 * time.Second)
 	// ToDo: check mockConsumers received data
 	t.Logf("%+v\n", mc.data)
 

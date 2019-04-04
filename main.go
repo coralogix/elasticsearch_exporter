@@ -77,6 +77,13 @@ func main() {
 		logOutput = kingpin.Flag("log.output",
 			"Sets the log output. Valid outputs are stdout and stderr").
 			Default("stdout").Envar("LOG_OUTPUT").String()
+
+		indicesName = kingpin.Flag("es.indices.stats",
+			"Indices to query their stats").
+			Default("_all").Envar("ES_INDICES_STATS").String()
+		indicesNamesDTLayout = kingpin.Flag("es.indices.dt.layout",
+			"Indices to query their stats").
+			Default("").Envar("ES_INDICES_DT_LAYOUT").String()
 	)
 
 	kingpin.Version(version.Print(Name))
@@ -116,7 +123,7 @@ func main() {
 	prometheus.MustRegister(collector.NewNodes(logger, httpClient, esURL, *esAllNodes, *esNode))
 
 	if *esExportIndices || *esExportShards {
-		iC := collector.NewIndices(logger, httpClient, esURL, *esExportShards)
+		iC := collector.NewIndices(logger, httpClient, esURL, *indicesName, *indicesNamesDTLayout, *esExportShards)
 		prometheus.MustRegister(iC)
 		if registerErr := clusterInfoRetriever.RegisterConsumer(iC); registerErr != nil {
 			_ = level.Error(logger).Log("msg", "failed to register indices collector in cluster info")

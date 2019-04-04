@@ -7,6 +7,8 @@ import (
 	"net/url"
 	"path"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -35,12 +37,14 @@ type shardMetric struct {
 
 // Indices information struct
 type Indices struct {
-	logger          log.Logger
-	client          *http.Client
-	url             *url.URL
-	shards          bool
-	clusterInfoCh   chan *clusterinfo.Response
-	lastClusterInfo *clusterinfo.Response
+	indices              string
+	indicesNamesDTLayout string
+	logger               log.Logger
+	client               *http.Client
+	url                  *url.URL
+	shards               bool
+	clusterInfoCh        chan *clusterinfo.Response
+	lastClusterInfo      *clusterinfo.Response
 
 	up                prometheus.Gauge
 	totalScrapes      prometheus.Counter
@@ -51,7 +55,7 @@ type Indices struct {
 }
 
 // NewIndices defines Indices Prometheus metrics
-func NewIndices(logger log.Logger, client *http.Client, url *url.URL, shards bool) *Indices {
+func NewIndices(logger log.Logger, client *http.Client, url *url.URL, indicesNames string, indicesNamesDTLayout string, shards bool) *Indices {
 
 	indexLabels := labels{
 		keys: func(...string) []string {
@@ -82,11 +86,13 @@ func NewIndices(logger log.Logger, client *http.Client, url *url.URL, shards boo
 	}
 
 	indices := &Indices{
-		logger:        logger,
-		client:        client,
-		url:           url,
-		shards:        shards,
-		clusterInfoCh: make(chan *clusterinfo.Response),
+		indices:              indicesNames,
+		indicesNamesDTLayout: indicesNamesDTLayout,
+		logger:               logger,
+		client:               client,
+		url:                  url,
+		shards:               shards,
+		clusterInfoCh:        make(chan *clusterinfo.Response),
 		lastClusterInfo: &clusterinfo.Response{
 			ClusterName: "unknown_cluster",
 		},
@@ -1021,11 +1027,19 @@ func (i *Indices) Describe(ch chan<- *prometheus.Desc) {
 	ch <- i.jsonParseFailures.Desc()
 }
 
+func (i *Indices) getIndicesNames() string {
+	if i.indicesNamesDTLayout != "" {
+		return strings.Replace(i.indices, "{dt_layout}", time.Now().Format(i.indicesNamesDTLayout), -1)
+	}
+
+	return i.indices
+}
+
 func (i *Indices) fetchAndDecodeIndexStats() (indexStatsResponse, error) {
 	var isr indexStatsResponse
 
 	u := *i.url
-	u.Path = path.Join(u.Path, "/_all/_stats")
+	u.Path = path.Join(u.Path, "/"+i.getIndicesNames()+"/_stats")
 	if i.shards {
 		u.RawQuery = "level=shards"
 	}

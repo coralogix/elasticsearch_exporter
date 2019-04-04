@@ -59,6 +59,8 @@ elasticsearch_exporter --help
 | web.listen-address      | 1.0.2                 | Address to listen on for web interface and telemetry. | :9114 |
 | web.telemetry-path      | 1.0.2                 | Path under which to expose metrics. | /metrics |
 | version                 | 1.0.2                 | Show version info on stdout and exit. | |
+| es.indices.stats        | ------                 | Query custom stats of indices | \_all |
+| es.indices.dt.layout    | ------                 | Replace indices stats "{dt_layout}" with the provided datetime layout | |
 
 Commandline parameters start with a single `-` for versions less than `1.1.0rc1`. 
 For versions greater than `1.1.0rc1`, commandline parameters are specified with `--`. Also, all commandline parameters can be provided as environment variables. The environment variable name is derived from the parameter name
