@@ -1,0 +1,17 @@
+{{- if .Values.prometheusRules.rules }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: "prometheus"
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    heritage: {{ .Release.Service }}
+    prometheus: "kube-prometheus"
+    release: {{ .Release.Name }}
+  name: kube-prometheus-{{ .Release.Name }}-rules
+spec:
+  groups:
+  - name: {{ .Release.Name }}.rules
+    rules:
+{{ toYaml .Values.prometheusRules.rules | indent 4 }}
+{{ end }}
