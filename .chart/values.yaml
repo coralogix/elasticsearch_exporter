@@ -61,7 +61,7 @@ es:
 
   ## Timeout for trying to get stats from Elasticsearch. (ex: 20s)
   ##
-  timeout: 60s
+  timeout: 40s
 
   ssl:
     ## If true, a secure connection to ES cluster is used (requires SSL certs below)
