@@ -3,11 +3,13 @@ apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
   labels:
-    app: "prometheus"
-    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    heritage: {{ .Release.Service }}
-    prometheus: "kube-prometheus"
-    release: {{ .Release.Name }}
+    chart: {{ template "elasticsearch-exporter.chart" . }}
+    app: {{ template "elasticsearch-exporter.name" . }}
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    {{- if .Values.serviceMonitor.labels }}
+    {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
+    {{- end }}
   name: kube-prometheus-{{ .Release.Name }}-rules
 spec:
   groups:
