@@ -94,6 +94,7 @@ serviceMonitor:
   ## https://github.com/coreos/prometheus-operator
   ##
   enabled: true
+  scrapeInterval: 60s
   labels:
     prometheus: kube-prometheus
 
