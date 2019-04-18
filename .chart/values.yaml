@@ -2,6 +2,8 @@
 ##
 replicaCount: 1
 
+fullnameOverride: elasticsearch-exporter
+
 ## restart policy for all containers
 ##
 restartPolicy: Always

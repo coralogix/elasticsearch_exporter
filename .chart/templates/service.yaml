@@ -5,8 +5,8 @@ metadata:
   labels:
     chart: {{ template "elasticsearch-exporter.chart" . }}
     app: {{ template "elasticsearch-exporter.name" . }}
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 {{- if .Values.service.annotations }}
   annotations:
 {{ toYaml .Values.service.annotations | indent 4 }}
@@ -19,4 +19,4 @@ spec:
       protocol: TCP
   selector:
     app: {{ template "elasticsearch-exporter.name" . }}
-    release: "{{ .Release.Name }}"
+    release: {{ .Release.Name | quote }}

@@ -5,14 +5,14 @@ metadata:
   labels:
     chart: {{ template "elasticsearch-exporter.chart" . }}
     app: {{ template "elasticsearch-exporter.name" . }}
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ template "elasticsearch-exporter.name" . }}
-      release: "{{ .Release.Name }}"
+      release: {{ .Release.Name | quote }}
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -22,7 +22,7 @@ spec:
     metadata:
       labels:
         app: {{ template "elasticsearch-exporter.name" . }}
-        release: "{{ .Release.Name }}"
+        release: {{ .Release.Name | quote }}
       {{- if .Values.podAnnotations }}
       annotations:
 {{ toYaml .Values.podAnnotations | indent 8 }}
@@ -36,7 +36,7 @@ spec:
         runAsNonRoot: true
         runAsUser: 1000
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ template "elasticsearch-exporter.fullname" . }}
           image: {{ template ".chart.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["elasticsearch_exporter",

@@ -7,8 +7,8 @@ metadata:
   labels:
     chart: {{ template "elasticsearch-exporter.chart" . }}
     app: {{ template "elasticsearch-exporter.name" . }}
-    release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
+    release: {{ .Release.Name | quote }}
+    heritage: {{ .Release.Service | quote }}
     {{- if .Values.serviceMonitor.labels }}
     {{- toYaml .Values.serviceMonitor.labels | nindent 4 }}
     {{- end }}
@@ -20,11 +20,11 @@ spec:
     port: http
     path: {{ .Values.web.path }}
     scheme: http
-  jobLabel: "{{ .Release.Name }}"
+  jobLabel: {{ .Release.Name | quote }}
   selector:
     matchLabels:
       app: {{ template "elasticsearch-exporter.name" . }}
-      release: "{{ .Release.Name }}"
+      release: {{ .Release.Name | quote }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
