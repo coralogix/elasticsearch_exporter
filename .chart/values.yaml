@@ -100,13 +100,13 @@ serviceMonitor:
 
 prometheusRules:
   rules:
-  - expr: sum(elasticsearch_indices_store_size_bytes_primary) by (index)
+  - expr: sum(elasticsearch_indices_store_size_bytes_primary) by (index, cluster)
     record: elasticsearch:indices_store_size_bytes_primary:sum
-  - expr: count(sum(elasticsearch_indices_shared_docs) by (index,shard)) by (index)
+  - expr: count(sum(elasticsearch_indices_shared_docs) by (index,shard)) by (index, cluster)
     record: elasticsearch:indices_shards:count
   - expr: sum(label_replace(label_replace(label_replace(elasticsearch:indices_store_size_bytes_primary:sum, "company_id", "$1", "index", "(.*)_newlogs_.*"), "alias", "$1", "index", "(.*_newlogs_.*)-.*"), "index_id", "$1", "index", ".*_newlogs_.*-(.*)")) without (index)
     record: elasticsearch:size_bytes_per_shard:relabel
-  - expr: sum(label_replace(label_replace(label_replace((count(sum(elasticsearch_indices_shared_docs) by (index,shard)) by (index)), "company_id", "$1", "index", "(.*)_newlogs_.*"), "alias", "$1", "index", "(.*_newlogs_.*)-.*"), "index_id", "$1", "index", ".*_newlogs_.*-(.*)")) without (index)
+  - expr: sum(label_replace(label_replace(label_replace((count(sum(elasticsearch_indices_shared_docs) by (index, shard, cluster)) by (index, cluster)), "company_id", "$1", "index", "(.*)_newlogs_.*"), "alias", "$1", "index", "(.*_newlogs_.*)-.*"), "index_id", "$1", "index", ".*_newlogs_.*-(.*)")) without (index)
     record: elasticsearch:indices_shards_count:relabel
   - expr: (elasticsearch:size_bytes_per_shard:relabel / elasticsearch:indices_shards_count:relabel) / 1000000000
     record: elasticsearch:size_gb_per_shard:div
