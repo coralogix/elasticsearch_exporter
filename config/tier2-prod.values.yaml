@@ -1,2 +1,4 @@
 es:
   uri: http://tier2-elasticsearch-client:9200
+
+nameOverride: "tier2-elasticsearch-exporter"
